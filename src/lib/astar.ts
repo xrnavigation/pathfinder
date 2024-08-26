@@ -60,15 +60,3 @@ function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap
   }
   return path;
 }
-
-function reconstructPath(endNode: AStarNode, nodeMap: Map<string, Node>): Node[] {
-  const path: Node[] = [];
-  let current: AStarNode | null = endNode;
-
-  while (current) {
-    path.unshift(nodeMap.get(current.id)!);
-    current = current.parent ? { id: current.parent, g: 0, h: 0, f: 0, parent: current.parent } : null;
-  }
-
-  return path;
-}
