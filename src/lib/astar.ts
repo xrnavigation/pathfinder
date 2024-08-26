@@ -64,7 +64,7 @@ function reconstructPath(endNode: AStarNode, nodeMap: Map<string, Node>): Node[]
 
   while (current) {
     path.unshift(nodeMap.get(current.id)!);
-    current = current.parent ? { id: current.parent, g: 0, h: 0, f: 0, parent: null } : null;
+    current = current.parent ? openSet.find(node => node.id === current!.parent) || null : null;
   }
 
   return path;

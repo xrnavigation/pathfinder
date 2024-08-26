@@ -29,36 +29,14 @@ export class Pathfinder {
     const path = astar(start, goal, nodes, edges, this.heuristic.bind(this));
     
     if (path) {
-      // Ensure the path includes all intermediate nodes
-      const fullPath: Node[] = [start];
-      for (let i = 1; i < path.length; i++) {
-        const intermediateNodes = this.findIntermediateNodes(path[i - 1], path[i], edges);
-        fullPath.push(...intermediateNodes);
-      }
-      fullPath.push(goal);
-      return fullPath;
+      // The path returned by astar already includes all nodes
+      return path;
     }
     
     return null;
   }
 
-  private findIntermediateNodes(from: Node, to: Node, edges: Edge[]): Node[] {
-    const intermediateNodes: Node[] = [];
-    let current = from;
-
-    while (current.id !== to.id) {
-      const edge = edges.find(e => e.source === current.id && e.target === to.id);
-      if (!edge) break;
-
-      const nextNode = this.graphBuilder.getNodes().find(n => n.id === edge.target);
-      if (!nextNode) break;
-
-      intermediateNodes.push(nextNode);
-      current = nextNode;
-    }
-
-    return intermediateNodes;
-  }
+  // Remove the findIntermediateNodes method as it's no longer needed
 
   private heuristic(a: Node, b: Node): number {
     const dx = a.coordinates[0] - b.coordinates[0];
