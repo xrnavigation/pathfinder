@@ -44,9 +44,9 @@ export function astar(
         const h = heuristic(neighborNode, goal);
         const f = tentativeGScore + h;
 
-        const neighborAStarNode = openSet.find(node => node.id === neighborId);
-        if (neighborAStarNode) {
-          Object.assign(neighborAStarNode, { g: tentativeGScore, h, f, parent: current.id });
+        const neighborIndex = openSet.findIndex(node => node.id === neighborId);
+        if (neighborIndex !== -1) {
+          openSet[neighborIndex] = { id: neighborId, g: tentativeGScore, h, f, parent: current.id };
         } else {
           openSet.push({ id: neighborId, g: tentativeGScore, h, f, parent: current.id });
         }
@@ -66,7 +66,7 @@ function reconstructPath(endNode: AStarNode, nodeMap: Map<string, Node>): Node[]
 
   while (current) {
     path.unshift(nodeMap.get(current.id)!);
-    current = current.parent ? { id: current.parent, g: 0, h: 0, f: 0, parent: null } : null;
+    current = current.parent ? { id: current.parent, g: 0, h: 0, f: 0, parent: current.parent } : null;
   }
 
   return path;
