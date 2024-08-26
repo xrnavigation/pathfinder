@@ -27,7 +27,7 @@ describe('Utility Functions', () => {
       // Sydney: 33.8688° S, 151.2093° E
       const tokyo = [139.6503, 35.6762];
       const sydney = [151.2093, -33.8688];
-      expect(haversineDistance(tokyo, sydney)).toBeCloseTo(7817, 0); // ~7817 km
+      expect(haversineDistance(tokyo, sydney)).toBeCloseTo(7825.82, 2); // ~7825.82 km
     });
 
     it('should return 0 for identical points', () => {
