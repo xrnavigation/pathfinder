@@ -28,8 +28,8 @@ Pathfinder is a TypeScript library designed to enable routing between features i
    - Cost function registration
 
 ## Implementation Steps
-1. Set up project with TypeScript and Vite (In Progress)
-2. Implement GeoJSON parsing and validation
+1. Set up project with TypeScript and Vite (Completed)
+2. Implement GeoJSON parsing and validation (In Progress)
 3. Develop graph building algorithm from GeoJSON features
 4. Implement core pathfinding algorithm
 5. Create cost function interface and default implementations
