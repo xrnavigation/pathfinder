@@ -74,12 +74,3 @@ function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap
   }
   return path;
 }
-
-function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap: Map<string, Node>): Node[] {
-  const path = [nodeMap.get(current)!];
-  while (cameFrom.has(current)) {
-    current = cameFrom.get(current)!;
-    path.unshift(nodeMap.get(current)!);
-  }
-  return path;
-}
