@@ -33,9 +33,19 @@ export class Pathfinder {
     }
 
     const nodeMap = new Map(nodes.map(node => [node.id, node]));
+    console.log('Node map:', nodeMap);
+    console.log('Edges:', edges);
+
     const path = astar(start, goal, nodeMap, edges, this.heuristic.bind(this), this.levelTransitionPenalty);
     
-    console.log('Path found:', path);
+    if (path === null) {
+      console.error('A* algorithm failed to find a path');
+    } else if (path.length === 0) {
+      console.error('A* algorithm returned an empty path');
+    } else {
+      console.log('Path found:', path.map(node => node.id));
+    }
+
     return path;
   }
 

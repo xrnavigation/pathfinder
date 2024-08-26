@@ -21,18 +21,27 @@ export function astar(
   const gScore = new Map<string, number>([[start.id, 0]]);
   const fScore = new Map<string, number>([[start.id, heuristic(start, goal)]]);
 
+  console.log('Starting A* algorithm');
+  console.log('Start node:', start);
+  console.log('Goal node:', goal);
+
   while (openSet.size > 0) {
     const current = Array.from(openSet).reduce((a, b) => 
       (fScore.get(a) || Infinity) < (fScore.get(b) || Infinity) ? a : b
     );
 
+    console.log('Current node:', nodeMap.get(current));
+
     if (current === goal.id) {
+      console.log('Goal reached');
       return reconstructPath(cameFrom, current, nodeMap);
     }
 
     openSet.delete(current);
 
     const neighbors = edges.filter(edge => edge.source === current || edge.target === current);
+    console.log('Neighbors:', neighbors);
+
     for (const edge of neighbors) {
       const neighbor = edge.source === current ? edge.target : edge.source;
       const currentNode = nodeMap.get(current)!;
@@ -40,15 +49,20 @@ export function astar(
       const levelTransitionCost = currentNode.levelId !== neighborNode.levelId ? levelTransitionPenalty : 0;
       const tentativeGScore = (gScore.get(current) || Infinity) + edge.weight + levelTransitionCost;
 
+      console.log('Evaluating neighbor:', neighborNode);
+      console.log('Tentative gScore:', tentativeGScore);
+
       if (tentativeGScore < (gScore.get(neighbor) || Infinity)) {
         cameFrom.set(neighbor, current);
         gScore.set(neighbor, tentativeGScore);
         fScore.set(neighbor, tentativeGScore + heuristic(neighborNode, goal));
         openSet.add(neighbor);
+        console.log('Updated neighbor scores');
       }
     }
   }
 
+  console.log('No path found');
   return null; // No path found
 }
 
