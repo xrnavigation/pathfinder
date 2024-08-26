@@ -27,7 +27,37 @@ export class Pathfinder {
     }
 
     const path = astar(start, goal, nodes, edges, this.heuristic.bind(this));
-    return path;
+    
+    if (path) {
+      // Ensure the path includes all intermediate nodes
+      const fullPath: Node[] = [start];
+      for (let i = 1; i < path.length; i++) {
+        const intermediateNodes = this.findIntermediateNodes(path[i - 1], path[i], edges);
+        fullPath.push(...intermediateNodes);
+      }
+      fullPath.push(goal);
+      return fullPath;
+    }
+    
+    return null;
+  }
+
+  private findIntermediateNodes(from: Node, to: Node, edges: Edge[]): Node[] {
+    const intermediateNodes: Node[] = [];
+    let current = from;
+
+    while (current.id !== to.id) {
+      const edge = edges.find(e => e.source === current.id && e.target === to.id);
+      if (!edge) break;
+
+      const nextNode = this.graphBuilder.getNodes().find(n => n.id === edge.target);
+      if (!nextNode) break;
+
+      intermediateNodes.push(nextNode);
+      current = nextNode;
+    }
+
+    return intermediateNodes;
   }
 
   private heuristic(a: Node, b: Node): number {
