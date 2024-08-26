@@ -47,7 +47,7 @@ export function astar(
       const currentNode = nodeMap.get(current)!;
       const neighborNode = nodeMap.get(neighbor)!;
       const levelTransitionCost = currentNode.levelId !== neighborNode.levelId ? levelTransitionPenalty : 0;
-      const tentativeGScore = (gScore.get(current) || Infinity) + edge.weight + levelTransitionCost;
+      const tentativeGScore = gScore.get(current)! + edge.weight + levelTransitionCost;
 
       console.log('Evaluating neighbor:', neighborNode);
       console.log('Tentative gScore:', tentativeGScore);
@@ -64,6 +64,15 @@ export function astar(
 
   console.log('No path found');
   return null; // No path found
+}
+
+function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap: Map<string, Node>): Node[] {
+  const path = [nodeMap.get(current)!];
+  while (cameFrom.has(current)) {
+    current = cameFrom.get(current)!;
+    path.unshift(nodeMap.get(current)!);
+  }
+  return path;
 }
 
 function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap: Map<string, Node>): Node[] {

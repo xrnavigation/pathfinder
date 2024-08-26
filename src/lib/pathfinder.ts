@@ -40,8 +40,10 @@ export class Pathfinder {
     
     if (path === null) {
       console.error('A* algorithm failed to find a path');
+      return null;
     } else if (path.length === 0) {
       console.error('A* algorithm returned an empty path');
+      return null;
     } else {
       console.log('Path found:', path.map(node => node.id));
     }
