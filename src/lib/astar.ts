@@ -11,11 +11,11 @@ interface AStarNode {
 export function astar(
   start: Node,
   goal: Node,
-  nodes: Node[],
+  nodeMap: Map<string, Node>,
   edges: Edge[],
-  heuristic: (a: Node, b: Node) => number
+  heuristic: (a: Node, b: Node) => number,
+  levelTransitionPenalty: number
 ): Node[] | null {
-  const nodeMap = new Map(nodes.map(node => [node.id, node]));
   const openSet: AStarNode[] = [{ id: start.id, g: 0, h: heuristic(start, goal), f: 0, parent: null }];
   const closedSet = new Set<string>();
   const gScores = new Map<string, number>([[start.id, 0]]);
@@ -35,8 +35,11 @@ export function astar(
       const neighborId = edge.source === current.id ? edge.target : edge.source;
       if (closedSet.has(neighborId)) continue;
 
-      const tentativeGScore = gScores.get(current.id)! + edge.weight;
+      const currentNode = nodeMap.get(current.id)!;
       const neighborNode = nodeMap.get(neighborId)!;
+      const levelTransitionCost = currentNode.levelId !== neighborNode.levelId ? levelTransitionPenalty : 0;
+      const tentativeGScore = gScores.get(current.id)! + edge.weight + levelTransitionCost;
+
       const neighborInOpenSet = openSet.find(node => node.id === neighborId);
 
       if (!neighborInOpenSet || tentativeGScore < gScores.get(neighborId)!) {

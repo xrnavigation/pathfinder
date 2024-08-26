@@ -26,10 +26,10 @@ export class Pathfinder {
       return null;
     }
 
-    const path = astar(start, goal, nodes, edges, this.heuristic.bind(this));
+    const nodeMap = new Map(nodes.map(node => [node.id, node]));
+    const path = astar(start, goal, nodeMap, edges, this.heuristic.bind(this), this.levelTransitionPenalty);
     
     if (path) {
-      // The path returned by astar already includes all nodes
       return path;
     }
     
