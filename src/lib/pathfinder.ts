@@ -2,6 +2,7 @@ import { FeatureCollection } from 'geojson';
 import { GeoJSONParser } from './geojsonParser';
 import { GraphBuilder, Node, Edge } from './graphBuilder';
 import { astar } from './astar';
+import { haversineDistance } from './utils';
 
 export class Pathfinder {
   private parser: GeoJSONParser;
@@ -54,14 +55,13 @@ export class Pathfinder {
   // Remove the findIntermediateNodes method as it's no longer needed
 
   private heuristic(a: Node, b: Node): number {
-    const dx = a.coordinates[0] - b.coordinates[0];
-    const dy = a.coordinates[1] - b.coordinates[1];
-    const euclideanDistance = Math.sqrt(dx * dx + dy * dy);
+    // Use haversineDistance for more accurate geographic distance calculation
+    const distance = haversineDistance(a.coordinates, b.coordinates);
 
     // Add level transition penalty if nodes are on different levels
     const levelPenalty = a.levelId !== b.levelId ? this.levelTransitionPenalty : 0;
 
-    return euclideanDistance + levelPenalty;
+    return distance + levelPenalty;
   }
 
   // Method to set custom level transition penalty
