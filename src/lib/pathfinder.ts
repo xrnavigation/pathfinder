@@ -27,7 +27,7 @@ export class Pathfinder {
     }
 
     const path = astar(start, goal, nodes, edges, this.heuristic.bind(this));
-    return path ? [start, ...path] : null;
+    return path;
   }
 
   private heuristic(a: Node, b: Node): number {

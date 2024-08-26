@@ -59,12 +59,11 @@ export function astar(
 }
 
 function reconstructPath(endNode: AStarNode, nodeMap: Map<string, Node>): Node[] {
-  const path: Node[] = [nodeMap.get(endNode.id)!];
+  const path: Node[] = [];
   let current: AStarNode | null = endNode;
 
-  while (current && current.parent) {
-    const parentNode = nodeMap.get(current.parent)!;
-    path.unshift(parentNode);
+  while (current) {
+    path.unshift(nodeMap.get(current.id)!);
     current = current.parent ? { id: current.parent, g: 0, h: 0, f: 0, parent: null } : null;
   }
 
