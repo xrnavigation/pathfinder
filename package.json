@@ -1,9 +1,4 @@
 {
-  "devDependencies": {
-    "@types/geojson": "^7946.0.14"
-  }
-}
-{
   "name": "pathfinder",
   "version": "0.0.1",
   "type": "module",
@@ -22,7 +17,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@types/geojson": "^7946.0.10",
+    "@types/geojson": "^7946.0.14",
     "typescript": "^5.0.2",
     "vite": "^4.3.2"
   }
