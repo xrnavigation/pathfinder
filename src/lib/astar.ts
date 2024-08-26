@@ -16,48 +16,49 @@ export function astar(
   heuristic: (a: Node, b: Node) => number,
   levelTransitionPenalty: number
 ): Node[] | null {
-  const openSet: AStarNode[] = [{ id: start.id, g: 0, h: heuristic(start, goal), f: 0, parent: null }];
-  const closedSet = new Set<string>();
-  const gScores = new Map<string, number>([[start.id, 0]]);
-  const fScores = new Map<string, number>([[start.id, heuristic(start, goal)]]);
+  const openSet = new Set<string>([start.id]);
+  const cameFrom = new Map<string, string>();
+  const gScore = new Map<string, number>([[start.id, 0]]);
+  const fScore = new Map<string, number>([[start.id, heuristic(start, goal)]]);
 
-  while (openSet.length > 0) {
-    const current = openSet.reduce((min, node) => (node.f < min.f ? node : min));
-    if (current.id === goal.id) {
-      return reconstructPath(current, nodeMap);
+  while (openSet.size > 0) {
+    const current = Array.from(openSet).reduce((a, b) => 
+      (fScore.get(a) || Infinity) < (fScore.get(b) || Infinity) ? a : b
+    );
+
+    if (current === goal.id) {
+      return reconstructPath(cameFrom, current, nodeMap);
     }
 
-    openSet.splice(openSet.indexOf(current), 1);
-    closedSet.add(current.id);
+    openSet.delete(current);
 
-    const neighbors = edges.filter(edge => edge.source === current.id || edge.target === current.id);
+    const neighbors = edges.filter(edge => edge.source === current || edge.target === current);
     for (const edge of neighbors) {
-      const neighborId = edge.source === current.id ? edge.target : edge.source;
-      if (closedSet.has(neighborId)) continue;
-
-      const currentNode = nodeMap.get(current.id)!;
-      const neighborNode = nodeMap.get(neighborId)!;
+      const neighbor = edge.source === current ? edge.target : edge.source;
+      const currentNode = nodeMap.get(current)!;
+      const neighborNode = nodeMap.get(neighbor)!;
       const levelTransitionCost = currentNode.levelId !== neighborNode.levelId ? levelTransitionPenalty : 0;
-      const tentativeGScore = gScores.get(current.id)! + edge.weight + levelTransitionCost;
+      const tentativeGScore = (gScore.get(current) || Infinity) + edge.weight + levelTransitionCost;
 
-      if (!gScores.has(neighborId) || tentativeGScore < gScores.get(neighborId)!) {
-        const h = heuristic(neighborNode, goal);
-        const f = tentativeGScore + h;
-
-        const neighborIndex = openSet.findIndex(node => node.id === neighborId);
-        if (neighborIndex !== -1) {
-          openSet[neighborIndex] = { id: neighborId, g: tentativeGScore, h, f, parent: current.id };
-        } else {
-          openSet.push({ id: neighborId, g: tentativeGScore, h, f, parent: current.id });
-        }
-
-        gScores.set(neighborId, tentativeGScore);
-        fScores.set(neighborId, f);
+      if (tentativeGScore < (gScore.get(neighbor) || Infinity)) {
+        cameFrom.set(neighbor, current);
+        gScore.set(neighbor, tentativeGScore);
+        fScore.set(neighbor, tentativeGScore + heuristic(neighborNode, goal));
+        openSet.add(neighbor);
       }
     }
   }
 
   return null; // No path found
+}
+
+function reconstructPath(cameFrom: Map<string, string>, current: string, nodeMap: Map<string, Node>): Node[] {
+  const path = [nodeMap.get(current)!];
+  while (cameFrom.has(current)) {
+    current = cameFrom.get(current)!;
+    path.unshift(nodeMap.get(current)!);
+  }
+  return path;
 }
 
 function reconstructPath(endNode: AStarNode, nodeMap: Map<string, Node>): Node[] {
