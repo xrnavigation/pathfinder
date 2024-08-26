@@ -40,16 +40,15 @@ export function astar(
       const levelTransitionCost = currentNode.levelId !== neighborNode.levelId ? levelTransitionPenalty : 0;
       const tentativeGScore = gScores.get(current.id)! + edge.weight + levelTransitionCost;
 
-      const neighborInOpenSet = openSet.find(node => node.id === neighborId);
-
-      if (!neighborInOpenSet || tentativeGScore < gScores.get(neighborId)!) {
+      if (!gScores.has(neighborId) || tentativeGScore < gScores.get(neighborId)!) {
         const h = heuristic(neighborNode, goal);
         const f = tentativeGScore + h;
 
-        if (!neighborInOpenSet) {
-          openSet.push({ id: neighborId, g: tentativeGScore, h, f, parent: current.id });
+        const neighborAStarNode = openSet.find(node => node.id === neighborId);
+        if (neighborAStarNode) {
+          Object.assign(neighborAStarNode, { g: tentativeGScore, h, f, parent: current.id });
         } else {
-          Object.assign(neighborInOpenSet, { g: tentativeGScore, h, f, parent: current.id });
+          openSet.push({ id: neighborId, g: tentativeGScore, h, f, parent: current.id });
         }
 
         gScores.set(neighborId, tentativeGScore);

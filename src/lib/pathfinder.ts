@@ -29,11 +29,7 @@ export class Pathfinder {
     const nodeMap = new Map(nodes.map(node => [node.id, node]));
     const path = astar(start, goal, nodeMap, edges, this.heuristic.bind(this), this.levelTransitionPenalty);
     
-    if (path) {
-      return path;
-    }
-    
-    return null;
+    return path;
   }
 
   // Remove the findIntermediateNodes method as it's no longer needed
