@@ -30,4 +30,33 @@ describe('GeoJSONParser', () => {
     const parser = new GeoJSONParser(validGeoJSON);
     expect(parser.getFeatures()).toHaveLength(1);
   });
+
+  it('should get features of a specific type', () => {
+    const mixedGeoJSON: FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [0, 0]
+          },
+          properties: {}
+        },
+        {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: [[0, 0], [1, 1]]
+          },
+          properties: {}
+        }
+      ]
+    };
+
+    const parser = new GeoJSONParser(mixedGeoJSON);
+    expect(parser.getFeaturesOfType('Point')).toHaveLength(1);
+    expect(parser.getFeaturesOfType('LineString')).toHaveLength(1);
+    expect(parser.getFeaturesOfType('Polygon')).toHaveLength(0);
+  });
 });

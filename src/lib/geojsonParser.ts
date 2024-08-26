@@ -43,5 +43,7 @@ export class GeoJSONParser {
     });
   }
 
-  // TODO: Implement more parsing and utility methods
+  public getFeaturesOfType(geometryType: string): Feature[] {
+    return this.getFeatures().filter(feature => feature.geometry.type === geometryType);
+  }
 }
