@@ -22,12 +22,21 @@ export class Pathfinder {
     const start = nodes.find(node => node.id === startId);
     const goal = nodes.find(node => node.id === goalId);
 
+    console.log('Start node:', start);
+    console.log('Goal node:', goal);
+    console.log('Total nodes:', nodes.length);
+    console.log('Total edges:', edges.length);
+
     if (!start || !goal) {
+      console.log('Start or goal node not found');
       return null;
     }
 
     const nodeMap = new Map(nodes.map(node => [node.id, node]));
-    return astar(start, goal, nodeMap, edges, this.heuristic.bind(this), this.levelTransitionPenalty);
+    const path = astar(start, goal, nodeMap, edges, this.heuristic.bind(this), this.levelTransitionPenalty);
+    
+    console.log('Path found:', path);
+    return path;
   }
 
   // Remove the findIntermediateNodes method as it's no longer needed
