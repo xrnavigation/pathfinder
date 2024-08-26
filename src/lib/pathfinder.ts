@@ -22,10 +22,11 @@ export class Pathfinder {
     const goal = nodes.find(node => node.id === goalId);
 
     if (!start || !goal) {
-      throw new Error('Start or goal node not found');
+      return null; // Return null instead of throwing an error
     }
 
-    return astar(start, goal, nodes, edges, this.heuristic);
+    const path = astar(start, goal, nodes, edges, this.heuristic);
+    return path ? [start, ...path] : null; // Include the start node in the path
   }
 
   private heuristic(a: Node, b: Node): number {
