@@ -6,6 +6,7 @@ import { astar } from './astar';
 export class Pathfinder {
   private parser: GeoJSONParser;
   private graphBuilder: GraphBuilder;
+  private levelTransitionPenalty: number = 10; // Penalty for changing levels
 
   constructor(geoJSON: FeatureCollection) {
     this.parser = new GeoJSONParser(geoJSON);
@@ -22,17 +23,26 @@ export class Pathfinder {
     const goal = nodes.find(node => node.id === goalId);
 
     if (!start || !goal) {
-      return null; // Return null instead of throwing an error
+      return null;
     }
 
-    const path = astar(start, goal, nodes, edges, this.heuristic);
-    return path ? [start, ...path] : null; // Include the start node in the path
+    const path = astar(start, goal, nodes, edges, this.heuristic.bind(this));
+    return path ? [start, ...path] : null;
   }
 
   private heuristic(a: Node, b: Node): number {
-    // Simple Euclidean distance heuristic
     const dx = a.coordinates[0] - b.coordinates[0];
     const dy = a.coordinates[1] - b.coordinates[1];
-    return Math.sqrt(dx * dx + dy * dy);
+    const euclideanDistance = Math.sqrt(dx * dx + dy * dy);
+
+    // Add level transition penalty if nodes are on different levels
+    const levelPenalty = a.levelId !== b.levelId ? this.levelTransitionPenalty : 0;
+
+    return euclideanDistance + levelPenalty;
+  }
+
+  // Method to set custom level transition penalty
+  setLevelTransitionPenalty(penalty: number): void {
+    this.levelTransitionPenalty = penalty;
   }
 }
